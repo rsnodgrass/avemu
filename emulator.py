@@ -82,7 +82,7 @@ class Server(threading.Thread):
 
 def main():
     p = arg.ArgumentParser(
-        description="Test server that partially emulates a specific device model"
+        description="avemu - Test server that partially emulates simple text based protocols exposed by A/V devices"
     )
     p.add_argument(
         "--port",
