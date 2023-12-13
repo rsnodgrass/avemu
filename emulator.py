@@ -62,7 +62,7 @@ class Server(threading.Thread):
                 if not data:
                     break
 
-                text = data.decode(self._handdler.encoding)
+                text = data.decode(self._handler.encoding)
 
                 # remove any termination/separators
                 text = text.replace("\r", "").replace("\n", "")
@@ -90,7 +90,7 @@ def main():
         type=int,
         default=4999,
     )
-    p.add_argument("--model", default="mx160", help="device model (e.g. mx160)")
+    p.add_argument("--model", default="mcintosh_mx160", help="device model (e.g. mcintosh_mx160)")
     p.add_argument(
         "--messages", help="alternative file of message responses (instead of model)"
     )

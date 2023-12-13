@@ -18,7 +18,7 @@ class DefaultHandler(EmulatorHandler):
         
         self.build_responses(model)
 
-    def handle_command(text: str):
+    def handle_command(self, text: str):
         values = {}
 
         action_id = self._commands.get(text)
