@@ -11,6 +11,8 @@ import threading
 from functools import wraps
 from threading import RLock
 
+from handlers.default import DefaultHandler
+
 import coloredlogs
 
 from pyavcontrol import DeviceController, DeviceModel
@@ -19,9 +21,6 @@ LOG = logging.getLogger(__name__)
 coloredlogs.install(level="DEBUG")
 
 CLIENTS = []
-COMMANDS = {}
-COMMAND_PATTERNS = {}
-COMMAND_RESPONSES = {}
 
 # special locked wrapper
 sync_lock = RLock()
@@ -37,12 +36,11 @@ def synchronized(func):
 
 
 class Server(threading.Thread):
-    def __init__(self, sock, address, model):
+    def __init__(self, sock, address, handler):
         threading.Thread.__init__(self)
         self._socket = sock
         self._address = address
-        self._model = model
-        self._encoding = "ascii"
+        self._handler = handler
         self.register_client()
 
     @synchronized
@@ -64,95 +62,22 @@ class Server(threading.Thread):
                 if not data:
                     break
 
-                text = data.decode(self._encoding)
+                text = data.decode(self._handdler.encoding)
 
                 # remove any termination/separators
                 text = text.replace("\r", "").replace("\n", "")
 
                 LOG.debug(f"Received: {text}")
-                response = handle_command(self._model, text)
+                response = self._handler.handle_command(text)
 
                 if response:
                     response += "\r"  # FIXME: add EOL/command separator
-                    data = response.encode(self._encoding)
+                    data = response.encode(self._handler.encoding)
                     self._socket.send(data)
 
         finally:
             self._socket.close()
             self.deregister_client()
-
-
-def handle_command(model: DeviceModel, text: str):
-    values = {}
-
-    action_id = COMMANDS.get(text)
-    if action_id:
-        LOG.info(f"Received {model.id} {action_id} cmd: {text}")
-
-    for pattern, regexp in COMMAND_PATTERNS.items():
-        m = re.match(regexp, text)
-        if m:
-            action_id = "Unknown"
-            values = m.groupdict()
-            LOG.info(
-                f"Received {model.id} {action_id} cmd: {text} -> {pattern} -> {values}"
-            )
-
-    if not action_id:
-        LOG.warning(f"No command found for: {text}")
-        return None
-
-    # just return a stock response, if response messages expected.
-    # NOTE: The returned data will NOT match the actual input, but will be a valid
-    # formatted response.
-    msg = COMMAND_RESPONSES.get(action_id)
-    if msg:
-        LOG.debug(f"Replying to {action_id} {text}: {msg}")
-    return msg
-
-
-def build_responses(model: DeviceModel):
-    api = model.config.get("api", {})
-    for group, group_def in api.items():
-        # LOG.debug(f"Building responses for group {group}")
-
-        actions = group_def.get("actions", {})
-        for action, action_def in actions.items():
-            action_id = f"{group}.{action}"
-
-            # register any response messages
-            msg = action_def.get("msg")
-            if msg:
-                # if the msg is based on a regexp, use a canned response
-                if "?P<" in msg:
-                    tests = action_def.get("tests", {}).get("msg")
-                    print(tests)
-                    if tests:
-                        msg = next(iter(tests))  # first key
-                        LOG.debug(
-                            f"Message {model.id} {action_id} is templated, returning canned test message: {msg}"
-                        )
-                    else:
-                        LOG.warning(
-                            f"Message {model.id} {action_id} is templated, but there are no canned test messages defined."
-                        )
-                COMMAND_RESPONSES[action_id] = msg
-
-            # register command regexp patterns (if any)
-            cmd_pattern = action_def.get("cmd_pattern")
-            if cmd_pattern:
-                cmd_pattern = f"^{cmd_pattern}$"
-                try:
-                    COMMAND_PATTERNS[cmd_pattern] = re.compile(cmd_pattern)
-                except Exception as e:
-                    LOG.error(
-                        f"Skipping {action_id} failed regexp compilation: {cmd_pattern} {e}"
-                    )
-                continue
-
-            # register basic lookups
-            cmd = action_def.get("cmd")
-            COMMANDS[cmd] = action_id
 
 
 def main():
@@ -189,12 +114,12 @@ def main():
         s.listen(2)
 
         model = DeviceModel(args.model)
-        build_responses(model)
+        handler = DefaultHandler(model)
 
         # accept connections
         while True:
             (sock, address) = s.accept()
-            Server(sock, address, model).start()
+            Server(sock, address, handler).start()
 
     finally:
         if s:
