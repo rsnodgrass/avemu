@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
-#
-# read all the protocol messages and respond to any "cmds" with one of the tests msgs
-# also echo to console the parsed cmd and msg
 
-import logging
 import argparse as arg
+import logging
 import re
 import socket
 import threading
 from functools import wraps
 from threading import RLock
 
-from handlers.default import DefaultHandler
-
 import coloredlogs
 
+from handlers.default import DefaultHandler
 from pyavcontrol import DeviceController, DeviceModel
 
 LOG = logging.getLogger(__name__)
@@ -82,7 +78,7 @@ class Server(threading.Thread):
 
 def main():
     p = arg.ArgumentParser(
-        description="avemu - Test server that partially emulates simple text based protocols exposed by A/V devices"
+        description="avemu - Test server that partially emulates simple text based protocols exposed by A/V devices (useful for testing clients without having physical hardware)"
     )
     p.add_argument(
         "--port",
@@ -90,10 +86,7 @@ def main():
         type=int,
         default=4999,
     )
-    p.add_argument("--model", default="mcintosh_mx160", help="device model (e.g. mcintosh_mx160)")
-    p.add_argument(
-        "--messages", help="alternative file of message responses (instead of model)"
-    )
+    p.add_argument("--model", help="device model (e.g. mcintosh_mx160)", required=True)
     p.add_argument(
         "--host", help="listener host (default=127.0.0.1)", default="127.0.0.1"
     )
