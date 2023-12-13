@@ -1,9 +1,10 @@
-# Python API for Controlling RS232/Text Based A/V Equipment (pyavcontrol)
+# avemu - Test Emulator for A/V Equipment RS232 Control
 
 ![beta_badge](https://img.shields.io/badge/maturity-Beta-yellow.png)
-[![PyPi](https://img.shields.io/pypi/v/pyavcontrol.svg)](https://pypi.python.org/pypi/pyavcontrol)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/rsnodgrass/pyavcontrol/actions/workflows/ci.yml/badge.svg)](https://github.com/rsnodgrass/pyavcontrol/actions/workflows/ci.yml)
+
+
+Developed to make testing client libraries easier when hardware wasn't available.
 
 This emulator exposes a `pyserial` (or IP2SL) compatible TCP port that can receive/respond to
 commands sent using simple text based (often RS232 compatible) protocols used by various audio
