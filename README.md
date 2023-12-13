@@ -25,7 +25,7 @@ used by clients developed in other languages as well.
 Example starting the McIntosh MX160 emulator:
 
 ```
-./emulator.py --model mcintosh_mx160 -d
+./avemu.py --model mcintosh_mx160 -d
 ```
 
 
