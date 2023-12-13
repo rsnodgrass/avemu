@@ -1,8 +1,9 @@
 # avemu - Test Emulator for A/V Equipment RS232 Control
 
-![beta_badge](https://img.shields.io/badge/maturity-Beta-yellow.png)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WREP29UDAMB6G)
+[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/DYks67r)
 
 Developed to make testing client libraries easier when hardware wasn't available.
 
