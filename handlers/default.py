@@ -21,13 +21,11 @@ class DefaultHandler(EmulatorHandler):
     def handle_command(self, text: str):
         values = {}
 
-        action_id = self._commands.get(text)
-        if action_id:
+        if action_id := self._commands.get(text):
             LOG.info(f"Received {model.id} {action_id} cmd: {text}")
 
         for pattern, regexp in self._command_patterns.items():
-            m = re.match(regexp, text)
-            if m:
+            if m := re.match(regexp, text):
                 action_id = "Unknown"
                 values = m.groupdict()
                 LOG.info(
@@ -41,8 +39,7 @@ class DefaultHandler(EmulatorHandler):
         # just return a stock response, if response messages expected.
         # NOTE: The returned data will NOT match the actual input, but will be a valid
         # formatted response.
-        msg = self._command_responses.get(action_id)
-        if msg:
+        if msg := self._command_responses.get(action_id):
             LOG.debug(f"Replying to {action_id} {text}: {msg}")
             return msg
 
@@ -56,26 +53,24 @@ class DefaultHandler(EmulatorHandler):
                 action_id = f"{group}.{action}"
 
                 # register any response messages
-                msg = action_def.get("msg")
-                if msg:
-                    # if the msg is based on a regexp, use a canned response
-                    if "?P<" in msg:
-                        tests = action_def.get("tests", {}).get("msg")
-                        print(tests)
-                        if tests:
-                            msg = next(iter(tests))  # first key
+                if msg := action_def.get("msg"):
+                  if response := msg.get('regex'):
+                    # if the msg is based on a regex, use a canned response
+                    if "?P<" in response:
+                        if tests := msg.get('tests'):
+                            response = next(iter(tests))  # first key... FIXME: future randomize?
                             LOG.debug(
-                                f"Message {model.id} {action_id} is templated, returning canned test message: {msg}"
+                                f"Message {model.id} {action_id} is templated, returning canned test message: {response}"
                             )
                         else:
                             LOG.warning(
                                 f"Message {model.id} {action_id} is templated, but there are no canned test messages defined."
                             )
-                        self._command_responses[action_id] = msg
+                        self._command_responses[action_id] = response
 
             # register command regexp patterns (if any)
-            cmd_pattern = action_def.get("cmd_pattern")
-            if cmd_pattern:
+            if cmd := action_def.get("cmd"):
+              if cmd_pattern := cmd.get("regex"):
                 cmd_pattern = f"^{cmd_pattern}$"
                 try:
                     self._command_patterns[cmd_pattern] = re.compile(cmd_pattern)
@@ -86,5 +81,6 @@ class DefaultHandler(EmulatorHandler):
                     continue
 
             # register basic lookups
-            cmd = action_def.get("cmd")
-            self._commands[cmd] = action_id
+            if cmd := action_def.get("cmd"):
+                if fstring := cmd.get('fstring'):
+                    self._commands[cmd] = fstring
