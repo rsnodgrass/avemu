@@ -32,9 +32,9 @@ Example starting the McIntosh MX160 emulator:
 
 ## Support
 
-This supports any A/V equipment supported by [pyavcontrol]()
+This supports any A/V equipment supported by [pyavcontrol](https://github.com/rsnodgrass/pymcintosh)
 
-See [SUPPORTED.md](SUPPORTED.md) for the complete list of supported equipment.
+See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.md) for the complete list of supported equipment.
 
 ## Background
 
