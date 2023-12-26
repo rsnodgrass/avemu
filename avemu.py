@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import argparse as arg
 import logging
+import argparse as arg
 import re
 import socket
 import threading
@@ -11,7 +11,7 @@ from threading import RLock
 import coloredlogs
 
 from handlers.default import DefaultHandler
-from pyavcontrol import DeviceController, DeviceModel
+from pyavcontrol import DeviceModelLibrary
 
 LOG = logging.getLogger(__name__)
 coloredlogs.install(level="DEBUG")
@@ -106,7 +106,7 @@ def main():
         s.bind((args.host, args.port))
         s.listen(2)
 
-        model = DeviceModel(args.model)
+        model = DeviceModelLibrary.create().load(args.model)
         handler = DefaultHandler(model)
 
         # accept connections
