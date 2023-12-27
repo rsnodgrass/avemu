@@ -63,6 +63,10 @@ class Server(threading.Thread):
                 # remove any termination/separators
                 text = text.replace("\r", "").replace("\n", "")
 
+                # skip processing if the request was empty
+                if not text:
+                    continue
+
                 LOG.debug(f"Received: {text}")
                 response = self._handler.handle_command(text)
 
@@ -107,6 +111,9 @@ def main():
         s.listen(2)
 
         model = DeviceModelLibrary.create().load_model(args.model)
+        if not model:
+            LOG.error(f"Could not find model '{args.model}' in the pyavcontrol library")
+            return
         handler = DefaultHandler(model)
 
         # accept connections

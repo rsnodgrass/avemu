@@ -1,7 +1,5 @@
 import logging
 
-from pyavcontrol import DeviceModel
-
 
 class EmulatorHandler:
     """
