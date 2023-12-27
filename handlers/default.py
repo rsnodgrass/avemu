@@ -1,4 +1,5 @@
 import logging
+import os
 import pprint as pp
 import re
 
@@ -24,11 +25,12 @@ class DefaultHandler(EmulatorHandler):
         if action_id := self._commands.get(text):
             LOG.info(f"Received {action_id} cmd: {text}")
 
-        for pattern, regexp in self._command_patterns.items():
-            if m := re.match(regexp, text):
-                action_id = "Unknown"
+        for action_id, regex in self._command_patterns.items():
+            print(f"{regex} <=> {text}")
+            if m := re.match(regex, text):
                 values = m.groupdict()
-                LOG.info(f"Received {action_id} cmd: {text} -> {pattern} -> {values}")
+                LOG.info(f"Received {action_id} cmd {text} -> {regex} -> {values}")
+                break
 
         if not action_id:
             LOG.warning(f"No command found for: {text}")
@@ -42,20 +44,18 @@ class DefaultHandler(EmulatorHandler):
             return msg
 
     def _display_help(self):
-        print("Supported commands:")
+        terminal_width = os.get_terminal_size()[0]
+        commands_per_row = terminal_width // 30
 
-        help = ""
-        i = 0
+        help = "Supported commands:\n"
+        i = 1
         for cmd in self._commands:
-            help += f"{cmd:<40}"
-            if not i % 2:
+            help += f"{cmd:<30}"
+            if not i % commands_per_row:
                 help += "\n"
             i += 1
 
         print(help)
-
-    #        pp.pprint(self._commands)
-    #        pp.pprint(self._command_patterns)
 
     def _build_canned_responses(self):
         api = self._model.get("api", {})
@@ -80,18 +80,18 @@ class DefaultHandler(EmulatorHandler):
                                 # )
                             else:
                                 LOG.warning(
-                                    f"Message {action_id} is templated, but no test messages defined in model that can be used as a canned response."
+                                    f"Message {action_id} is templated regexp, but tests defined to use as a canned response."
                                 )
-                            self._command_responses[action_id] = response
+
+                        # record the command response for the action_id
+                        self._command_responses[action_id] = response
 
                 # register command regexp patterns (if any)
                 if cmd := action_def.get("cmd"):
                     if cmd_pattern := cmd.get("regex"):
                         cmd_pattern = f"^{cmd_pattern}$"
                         try:
-                            self._command_patterns[cmd_pattern] = re.compile(
-                                cmd_pattern
-                            )
+                            self._command_patterns[action_id] = re.compile(cmd_pattern)
                         except Exception as e:
                             LOG.error(
                                 f"Skipping failed regex compilation for {action_id}: {cmd_pattern}",
@@ -99,7 +99,8 @@ class DefaultHandler(EmulatorHandler):
                             )
                             continue
 
-                # register basic lookups
+                # register basic lookups (note, this also includes regex, which is useful
+                # for documentation...and shouldn't break clients)
                 if cmd := action_def.get("cmd"):
                     if fstring := cmd.get("fstring"):
                         self._commands[fstring] = action_id

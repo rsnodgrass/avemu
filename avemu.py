@@ -14,8 +14,9 @@ from handlers.default import DefaultHandler
 from pyavcontrol import DeviceModelLibrary
 
 LOG = logging.getLogger(__name__)
-coloredlogs.install(level="DEBUG")
+coloredlogs.install(level="INFO")
 
+DEFAULT_PORT = 4999
 CLIENTS = []
 
 # special locked wrapper
@@ -29,6 +30,17 @@ def synchronized(func):
             return func(*args, **kwargs)
 
     return wrapper
+
+
+def host_ip4_addresses():
+    ip_list = []
+    for i in socket.getaddrinfo(socket.gethostname(), None):
+        if i[0] is socket.AF_INET and i[1] is socket.SOCK_STREAM:
+            ip = i[4][0]
+            # if not localhost, add to the list of IP addresses for interfaces
+            if ip != "127.0.0.1":
+                ip_list.append(ip)
+    return ip_list
 
 
 class Server(threading.Thread):
@@ -68,9 +80,8 @@ class Server(threading.Thread):
                     continue
 
                 LOG.debug(f"Received: {text}")
-                response = self._handler.handle_command(text)
 
-                if response:
+                if response := self._handler.handle_command(text):
                     response += "\r"  # FIXME: add EOL/command separator
                     data = response.encode(self._handler.encoding)
                     self._socket.send(data)
@@ -86,23 +97,38 @@ def main():
     )
     p.add_argument(
         "--port",
-        help="port to listen on (default=4999, typical port used by an IP2SL device)",
+        help=f"port to listen on (default is emulated device's default port or {DEFAULT_PORT})",
         type=int,
-        default=4999,
+        default=DEFAULT_PORT,
     )
     p.add_argument("--model", help="device model (e.g. mcintosh_mx160)", required=True)
-    p.add_argument(
-        "--host", help="listener host (default=127.0.0.1)", default="127.0.0.1"
-    )
+    p.add_argument("--host", help="listener host (default=0.0.0.0)", default="0.0.0.0")
     p.add_argument("-d", "--debug", action="store_true", help="verbose logging")
     args = p.parse_args()
 
     if args.debug:
         logging.getLogger().setLevel(level=logging.DEBUG)
 
-    # listen on the specified port
-    url = f"socket://{args.host}:{args.port}/"
-    LOG.info(f"Emulating model {args.model} on {url}")
+    # load the model definition for the device
+    model = DeviceModelLibrary.create().load_model(args.model)
+    if not model:
+        LOG.error(f"Could not find model '{args.model}' in the pyavcontrol library")
+        return
+
+    # default the port to the device's typical port, if available
+    port = args.port
+    if port == DEFAULT_PORT:
+        if device_default_port := model.get("connection", {}).get("ip", {}).get("port"):
+            port = device_default_port
+            LOG.info(f"Using default port {port} for {args.model}")
+
+    # if listening on all network interfaces, display all the IP addresses for convenience
+    all_ips = ""
+    if args.host == "0.0.0.0":
+        all_ips = f" (also {','.join(host_ip4_addresses())})"
+
+    url = f"socket://{args.host}:{port}/"
+    LOG.info(f"Emulating model {args.model} on {url} {all_ips}")
 
     s = None
     try:
@@ -110,10 +136,6 @@ def main():
         s.bind((args.host, args.port))
         s.listen(2)
 
-        model = DeviceModelLibrary.create().load_model(args.model)
-        if not model:
-            LOG.error(f"Could not find model '{args.model}' in the pyavcontrol library")
-            return
         handler = DefaultHandler(model)
 
         # accept connections
