@@ -1,24 +1,22 @@
 import logging
 import re
 
-from pyavcontrol import DeviceModel
-
 from . import EmulatorHandler
 
 LOG = logging.getLogger(__name__)
 
 
 class DefaultHandler(EmulatorHandler):
-    def __init__(self, model: DeviceModel):
-        EmulatorHandler.__init__(self, model)
+    def __init__(self, model: dict):
+        super().__init__(self, model)
 
         self._commands = {}
         self._command_patterns = {}
         self._command_responses = {}
 
-        self.build_responses(model)
+        self._build_canned_responses()
 
-    def handle_command(self, text: str):
+    def handle_command(self, text: str) -> str:
         values = {}
 
         if action_id := self._commands.get(text):
@@ -43,8 +41,8 @@ class DefaultHandler(EmulatorHandler):
             LOG.debug(f"Replying to {action_id} {text}: {msg}")
             return msg
 
-    def build_responses(self, model: DeviceModel):
-        api = model.config.get("api", {})
+    def _build_canned_responses(self):
+        api = self._model.get("api", {})
         for group, group_def in api.items():
             # LOG.debug(f"Building responses for group {group}")
 

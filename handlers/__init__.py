@@ -9,7 +9,7 @@ class EmulatorHandler:
     commands for a device.
     """
 
-    def __init__(self, model: DeviceModel):
+    def __init__(self, model: dict):
         self._model = model
 
     def handle_command(self, text: str) -> str:

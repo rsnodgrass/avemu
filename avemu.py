@@ -106,7 +106,7 @@ def main():
         s.bind((args.host, args.port))
         s.listen(2)
 
-        model = DeviceModelLibrary.create().load(args.model)
+        model = DeviceModelLibrary.create().load_model(args.model)
         handler = DefaultHandler(model)
 
         # accept connections
