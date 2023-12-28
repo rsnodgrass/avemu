@@ -14,7 +14,7 @@ from handlers.default import DefaultHandler
 from pyavcontrol import DeviceModelLibrary
 
 LOG = logging.getLogger(__name__)
-coloredlogs.install(level="INFO")
+coloredlogs.install(level="DEBUG")
 
 DEFAULT_PORT = 4999
 CLIENTS = []
