@@ -32,7 +32,8 @@ new devices, contribute through pyavcontrol and avemu will automatically include
 | Lyngdorf     | CD-2        |
 | Xantech      | MRAUDIO8x8  |
 | HDFury       | VRROOM      |
-| ...          | ...and more |
+|              |             |
+| ...and more  |             |
 
 ## Example Execution
 
