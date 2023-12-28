@@ -20,16 +20,19 @@ commands, messages, and simple tests enables quickly spinning up libraries in ot
 
 #### Supported Devices
 
-See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.md) for the complete list of supported equipment.
+See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.md) for the
+complete list of supported devices. If interested in submitting YAML file defining the model for
+new devices, contribute through pyavcontrol and avemu will automatically include the new device.
 
-| Manufacturer | Model      |
-|--------------|------------|
-| McIntosh     | MX-160     |
-| McIntosh     | MX-180     |
-| Lyngdorf     | TDAI-3400  |
-| Lyngdorf     | CD-2       |
-| Xantech      | MRAUDIO8x8 |
-| HDFury       | VRROOM     |
+| Manufacturer | Model       |
+|--------------|-------------|
+| McIntosh     | MX-160      |
+| McIntosh     | MX-180      |
+| Lyngdorf     | TDAI-3400   |
+| Lyngdorf     | CD-2        |
+| Xantech      | MRAUDIO8x8  |
+| HDFury       | VRROOM      |
+| ...          | ...and more |
 
 ## Example Execution
 
