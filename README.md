@@ -44,6 +44,33 @@ See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.
 This interface uses URLs for specifying the communication transport
 to use, as defined in [pyserial](https://pyserial.readthedocs.io/en/latest/url_handlers.html), to allow a wide variety of underlying mechanisms.
 
+# Example Execution
+
+The following is an example run `avemu` with the Lyngdorf CD-2 `lyngdorf_cd2` model from [pyavcontrol](https://github.com/rsnodgrass/pyavcontrol/):
+
+```console
+% ./avemu.py --model lyngdorf_cd2
+2023-12-27 22:17:46 laptop.local __main__[38770] INFO Using default port 84 for lyngdorf_cd2
+2023-12-27 22:17:46 laptop.local __main__[38770] INFO Emulating model lyngdorf_cd2 on socket://0.0.0.0:84/  (also on 192.168.1.25)
+Supported commands:
+!DEVICE?                      !ON                           !OFF                          !PWR                          
+!NEXT                         !PLAY                         !STOP                         !PREV                         
+!EJECT                        !REWIND                       !WIND                         !STOPWIND                     
+!STATE?                       !DIGIT(1)                     !DIGIT(2)                     !TRACK?                       
+!NOFTRACKS?                   !TIME?                        !REMTIME?                     !PLAYMODE({mode})             
+!PLAYMODE(0)                  !PLAYMODE(1)                  !PLAYMODE(2)                  !PLAYMODE(3)                  
+!DISPMODE({mode})             !DISPMODE(0)                  !DISPMODE(1)                  !DISPMODE(2)                  
+!DISPMODE(3)                  !SAMPLERATE({sample_rate})    !GAIN({gain})                 !SRC?                         
+2023-12-27 22:17:50 laptop.local __main__[38770] INFO 192.168.1.125:57620 connected.
+2023-12-27 22:17:50 laptop.local __main__[38770] INFO 192.168.1.125:57620 connected.
+2023-12-27 22:17:50 laptop.local __main__[38770] DEBUG Received: !DEVICE?
+2023-12-27 22:17:50 laptop.local handlers.default[38770] INFO Received device.name cmd: !DEVICE?
+2023-12-27 22:17:50 laptop.local handlers.default[38770] DEBUG Replying to device.name !DEVICE?: !DEVICE(CD2)
+2023-12-27 22:17:50 laptop.local __main__[38770] DEBUG Received: !SRC?
+2023-12-27 22:17:50 laptop.local handlers.default[38770] INFO Received source.get cmd: !SRC?
+2023-12-27 22:17:50 laptop.local handlers.default[38770] DEBUG Replying to source.get !SRC?: !SRC(1,"CD")
+```
+
 # Future Ideas
 
 - Add ability to define EmulatorHandler class for each device model that allows additional programmatic
