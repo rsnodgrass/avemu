@@ -125,7 +125,7 @@ def main():
     # if listening on all network interfaces, display all the IP addresses for convenience
     all_ips = ""
     if args.host == "0.0.0.0":
-        all_ips = f" (also {','.join(host_ip4_addresses())})"
+        all_ips = f" (also on {','.join(host_ip4_addresses())})"
 
     url = f"socket://{args.host}:{port}/"
     LOG.info(f"Emulating model {args.model} on {url} {all_ips}")

@@ -20,15 +20,15 @@ class DefaultHandler(EmulatorHandler):
         self._display_help()
 
     def handle_command(self, text: str) -> str:
-        values = {}
-
         if action_id := self._commands.get(text):
             LOG.info(f"Received {action_id} cmd: {text}")
 
-        for action_id, regex in self._command_patterns.items():
+        for aid, regex in self._command_patterns.items():
             if m := re.match(regex, text):
-                values = m.groupdict()
-                LOG.info(f"Received {action_id} cmd {text} -> {regex} -> {values}")
+                action_id = aid
+                LOG.info(
+                    f"Received {action_id} cmd {text} -> {regex} -> {m.groupdict()}"
+                )
                 break
 
         if not action_id:
@@ -41,6 +41,8 @@ class DefaultHandler(EmulatorHandler):
         if msg := self._command_responses.get(action_id):
             LOG.debug(f"Replying to {action_id} {text}: {msg}")
             return msg
+
+        return ""
 
     def _display_help(self):
         terminal_width = os.get_terminal_size()[0]
@@ -83,6 +85,7 @@ class DefaultHandler(EmulatorHandler):
                                 )
 
                         # record the command response for the action_id
+                        # print(f"{action_id} = {response}")
                         self._command_responses[action_id] = response
 
                 # register command regexp patterns (if any)
