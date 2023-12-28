@@ -22,6 +22,14 @@ commands, messages, and simple tests enables quickly spinning up libraries in ot
 
 See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.md) for the complete list of supported equipment.
 
+| Manufacturer | Model      |
+|--------------|------------|
+| Lyngdorf     | TDAI-3400  |
+| Lyngdorf     | CD-2       |
+| McIntosh     | MX160      |
+| Xantech      | MRAUDIO8x8 |
+| HDFury       | VRROOM     |
+
 ## Example Execution
 
 The following is an example run `avemu` with the Lyngdorf CD-2 `lyngdorf_cd2` model from [pyavcontrol](https://github.com/rsnodgrass/pyavcontrol/):
