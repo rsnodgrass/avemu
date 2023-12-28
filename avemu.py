@@ -45,11 +45,12 @@ def host_ip4_addresses():
 
 
 class Server(threading.Thread):
-    def __init__(self, sock, address, handler):
+    def __init__(self, sock, address, handler, model):
         threading.Thread.__init__(self)
         self._socket = sock
         self._address = address
         self._handler = handler
+        self._model = model
         self.register_client()
 
     @synchronized
@@ -66,15 +67,16 @@ class Server(threading.Thread):
         try:
             self.register_client()
 
+            # each type of device has a unique EOL, use config from model
+            eol = model.get("format").get("command").get("eol")
+
             while True:  # continously read data
                 data = self._socket.recv(1024)
                 if not data:
                     break
 
-                text = data.decode(self._handler.encoding)
-
-                eol = "\r\n"  # FIXME: use from definition
-                requests = text.split(eol)
+                decoded_data = data.decode(self._handler.encoding)
+                requests = decoded_data.split(eol)
 
                 for req in requests:
                     # remove any termination/separators
@@ -147,7 +149,7 @@ def main():
         # accept connections
         while True:
             (sock, address) = s.accept()
-            Server(sock, address, handler).start()
+            Server(sock, address, handler, model).start()
 
     finally:
         if s:
