@@ -26,7 +26,6 @@ class DefaultHandler(EmulatorHandler):
             LOG.info(f"Received {action_id} cmd: {text}")
 
         for action_id, regex in self._command_patterns.items():
-            print(f"{regex} <=> {text}")
             if m := re.match(regex, text):
                 values = m.groupdict()
                 LOG.info(f"Received {action_id} cmd {text} -> {regex} -> {values}")

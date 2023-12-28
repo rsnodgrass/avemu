@@ -133,7 +133,7 @@ def main():
     s = None
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((args.host, args.port))
+        s.bind((args.host, port))
         s.listen(2)
 
         handler = DefaultHandler(model)
