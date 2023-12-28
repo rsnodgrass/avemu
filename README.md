@@ -40,6 +40,7 @@ new devices, contribute through pyavcontrol and avemu will automatically include
 | McIntosh     | MX-160, MX-180      |
 | Lyngdorf     | TDAI-3400, CD-2     |
 | Xantech      | MRAUDIO8x8, MX88    |
+| Trinnov      | Altitude32          |
 | HDFury       | VRROOM              |
 | ...and more  |                     |
 
