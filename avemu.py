@@ -68,7 +68,7 @@ class Server(threading.Thread):
             self.register_client()
 
             # each type of device has a unique EOL, use config from model
-            eol = model.get("format").get("command").get("eol")
+            eol = self._model.get("format").get("command").get("eol")
 
             while True:  # continously read data
                 data = self._socket.recv(1024)
