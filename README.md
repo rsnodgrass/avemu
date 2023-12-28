@@ -24,16 +24,13 @@ See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.
 complete list of supported devices. If interested in submitting YAML file defining the model for
 new devices, contribute through pyavcontrol and avemu will automatically include the new device.
 
-| Manufacturer | Model       |
-|--------------|-------------|
-| McIntosh     | MX-160      |
-| McIntosh     | MX-180      |
-| Lyngdorf     | TDAI-3400   |
-| Lyngdorf     | CD-2        |
-| Xantech      | MRAUDIO8x8  |
-| HDFury       | VRROOM      |
-|              |             |
-| ...and more  |             |
+| Manufacturer | Models              |
+|--------------|---------------------|
+| McIntosh     | MX-160, MX-180      |
+| Lyngdorf     | TDAI-3400, CD-2     |
+| Xantech      | MRAUDIO8x8, MX88    |
+| HDFury       | VRROOM              |
+| ...and more  |                     |
 
 ## Example Execution
 
