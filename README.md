@@ -1,9 +1,7 @@
 # avemu - Test Emulator for A/V Equipment RS232 Control
 
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WREP29UDAMB6G)
-[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/DYks67r)
+![beta_badge](https://img.shields.io/badge/maturity-Beta-yellow.png)
 
 ## Overview
 
@@ -18,7 +16,18 @@ Additionally, the [pyavcontrol](https://github.com/rsnodgrass/pymcintosh) YAML f
 commands, messages, and simple tests enables quickly spinning up libraries in other languages
 (Go, C, etc) that support a wide variety of devices.
 
-#### Supported Devices
+### Support
+
+While this is community supported along with all the 'pyavcontrol', effort was involved in creating
+this tool and new way of defining A/V equipment control interfaces to make emulation and client
+libraries possible. Please consider contributing a small token of thanks:
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WREP29UDAMB6G)
+[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/DYks67r)
+
+If you have questions or need the help of others, please participate in the community discussion. **(LINK TO BE ADDED)**
+
+### Supported Devices
 
 See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.md) for the
 complete list of supported devices. If interested in submitting YAML file defining the model for
