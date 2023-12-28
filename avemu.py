@@ -4,6 +4,7 @@ import logging
 import argparse as arg
 import re
 import socket
+import sys
 import threading
 from functools import wraps
 from threading import RLock
@@ -72,19 +73,21 @@ class Server(threading.Thread):
 
                 text = data.decode(self._handler.encoding)
 
-                # remove any termination/separators
-                text = text.replace("\r", "").replace("\n", "")
+                eol = "\r\n"  # FIXME: use from definition
+                requests = text.split(eol)
 
-                # skip processing if the request was empty
-                if not text:
-                    continue
+                for req in requests:
+                    # remove any termination/separators
+                    req = req.replace("\r", "").replace("\n", "")
+                    if not req:
+                        continue
 
-                LOG.debug(f"Received: {text}")
+                    LOG.debug(f"Received: {req}")
 
-                if response := self._handler.handle_command(text):
-                    response += "\r"  # FIXME: add EOL/command separator
-                    data = response.encode(self._handler.encoding)
-                    self._socket.send(data)
+                    if response := self._handler.handle_command(req):
+                        response += "\r"  # FIXME: add EOL/command separator
+                        data = response.encode(self._handler.encoding)
+                        self._socket.send(data)
 
         finally:
             self._socket.close()
@@ -133,6 +136,9 @@ def main():
     s = None
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(
+            socket.SOL_SOCKET, socket.SO_REUSEADDR, 1
+        )  # force reuse (if killed recently)
         s.bind((args.host, port))
         s.listen(2)
 
