@@ -1,2 +1,2 @@
 coloredlogs
-pyavcontrol
+pyavcontrol>=0.1.2

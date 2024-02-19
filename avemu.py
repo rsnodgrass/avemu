@@ -9,6 +9,7 @@ from threading import RLock
 
 import coloredlogs
 
+from handlers import format_data_into_columns
 from handlers.default import DefaultHandler
 from pyavcontrol import DeviceModelLibrary
 
@@ -66,7 +67,11 @@ class Server(threading.Thread):
             self.register_client()
 
             # each type of device has a unique EOL, use config from model
-            eol = self._model.get('format').get('command').get('eol')
+            # FIXME: Switch to Config.protocol and Config.command_eol from pyavcontrol in future
+            protocol = self._model.definition['protocol']
+            cmd_separator = protocol.get('command_separator', '\n')
+            cmd_eol = protocol.get('command_eol', '')
+            msg_eol = protocol.get('message_eol', '')
 
             while True:  # continously read data
                 data = self._socket.recv(1024)
@@ -74,18 +79,18 @@ class Server(threading.Thread):
                     break
 
                 decoded_data = data.decode(self._handler.encoding)
-                requests = decoded_data.split(eol)
+                requests = decoded_data.split(cmd_eol)
 
                 for req in requests:
                     # remove any termination/separators
-                    req = req.replace('\r', '').replace('\n', '')
+                    req = req.replace(cmd_eol, '').replace(cmd_separator, '')
                     if not req:
                         continue
 
                     LOG.debug(f'Received: {req}')
 
                     if response := self._handler.handle_command(req):
-                        response += '\r'  # FIXME: add EOL/command separator
+                        response += msg_eol
                         data = response.encode(self._handler.encoding)
                         self._socket.send(data)
 
@@ -96,7 +101,9 @@ class Server(threading.Thread):
 
 def main():
     p = arg.ArgumentParser(
-        description='avemu - Test server that partially emulates simple text based protocols exposed by A/V devices (useful for testing clients without having physical hardware)'
+        description='avemu - Test server that partially emulates simple text '
+        'based protocols exposed by A/V devices (useful for testing clients '
+        'without having physical hardware)'
     )
     p.add_argument(
         '--port',
@@ -105,6 +112,9 @@ def main():
         default=DEFAULT_PORT,
     )
     p.add_argument('--model', help='device model (e.g. mcintosh_mx160)', required=True)
+    p.add_argument(
+        '--supported', help='list supported models', action=arg.BooleanOptionalAction
+    )
     p.add_argument('--host', help='listener host (default=0.0.0.0)', default='0.0.0.0')
     p.add_argument('-d', '--debug', action='store_true', help='verbose logging')
     args = p.parse_args()
@@ -112,8 +122,15 @@ def main():
     if args.debug:
         logging.getLogger().setLevel(level=logging.DEBUG)
 
+    library = DeviceModelLibrary.create()
+
+    if args.supported:
+        print('\nModels supported by avemu:\n')
+        print(format_data_into_columns(sorted(list(library.supported_models()))))
+        return
+
     # load the model definition for the device
-    model = DeviceModelLibrary.create().load_model(args.model)
+    model = library.load_model(args.model)
     if not model:
         LOG.error(f"Could not find model '{args.model}' in the pyavcontrol library")
         return
@@ -121,7 +138,11 @@ def main():
     # default the port to the device's typical port, if available
     port = args.port
     if port == DEFAULT_PORT:
-        if device_default_port := model.get('connection', {}).get('ip', {}).get('port'):
+        if (
+            device_default_port := model.definition['connection']
+            .get('ip', {})
+            .get('port')
+        ):
             port = device_default_port
             LOG.info(f'Using default port {port} for {args.model}')
 

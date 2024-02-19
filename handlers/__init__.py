@@ -1,4 +1,20 @@
-import logging
+import os
+
+
+def format_data_into_columns(data):
+    text = ''
+
+    terminal_width = os.get_terminal_size()[0]
+    entries_per_row = terminal_width // 30
+
+    i = 1
+    for entry in data:
+        text += f'{entry:<30}'
+        if not i % entries_per_row:
+            text += '\n'
+        i += 1
+
+    return text
 
 
 class EmulatorHandler:
@@ -21,4 +37,4 @@ class EmulatorHandler:
         """
         :return the encoding used for data transfered for this model (defaults to ASCII)
         """
-        return "ascii"
+        return 'ascii'
