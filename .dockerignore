@@ -1,0 +1,12 @@
+.git
+*.md
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.mypy_cache
+.pytest_cache
