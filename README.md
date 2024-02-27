@@ -14,7 +14,7 @@ controlling McIntosh, Lyngdorf, Xantech, and Anthem processors where the protoco
 text based interactions and similar. After building several custom libraries, a "common" YAML
 based protocol definition format was created so building additional librares was not necessary.
 
-Additionally, the [pyavcontrol](https://github.com/rsnodgrass/pymcintosh) YAML format defining
+Additionally, the [pyavcontrol](https://github.com/rsnodgrass/pyavcontrol) YAML format defining
 commands, messages, and simple tests enables quickly spinning up libraries in other languages
 (Go, C, etc) that support a wide variety of devices.
 
@@ -31,7 +31,7 @@ If you have questions or need the help of others, please participate in the comm
 
 ### Supported Devices
 
-See [SUPPORTED.md](https://github.com/rsnodgrass/pymcintosh/blob/main/SUPPORTED.md) for the
+See [SUPPORTED.md](https://github.com/rsnodgrass/pyavcontrol/blob/main/SUPPORTED.md) for the
 complete list of supported devices. If interested in submitting YAML file defining the model for
 new devices, contribute through pyavcontrol and avemu will automatically include the new device.
 
@@ -53,14 +53,14 @@ The following is an example run `avemu` with the Lyngdorf CD-2 `lyngdorf_cd2` mo
 2023-12-27 22:17:46 laptop.local __main__[38770] INFO Using default port 84 for lyngdorf_cd2
 2023-12-27 22:17:46 laptop.local __main__[38770] INFO Emulating model lyngdorf_cd2 on socket://0.0.0.0:84/  (also on 192.168.1.25)
 Supported commands:
-!DEVICE?                      !ON                           !OFF                          !PWR                          
-!NEXT                         !PLAY                         !STOP                         !PREV                         
-!EJECT                        !REWIND                       !WIND                         !STOPWIND                     
-!STATE?                       !DIGIT(1)                     !DIGIT(2)                     !TRACK?                       
-!NOFTRACKS?                   !TIME?                        !REMTIME?                     !PLAYMODE({mode})             
-!PLAYMODE(0)                  !PLAYMODE(1)                  !PLAYMODE(2)                  !PLAYMODE(3)                  
-!DISPMODE({mode})             !DISPMODE(0)                  !DISPMODE(1)                  !DISPMODE(2)                  
-!DISPMODE(3)                  !SAMPLERATE({sample_rate})    !GAIN({gain})                 !SRC?                         
+!DEVICE?                      !ON                           !OFF                          !PWR
+!NEXT                         !PLAY                         !STOP                         !PREV
+!EJECT                        !REWIND                       !WIND                         !STOPWIND
+!STATE?                       !DIGIT(1)                     !DIGIT(2)                     !TRACK?
+!NOFTRACKS?                   !TIME?                        !REMTIME?                     !PLAYMODE({mode})
+!PLAYMODE(0)                  !PLAYMODE(1)                  !PLAYMODE(2)                  !PLAYMODE(3)
+!DISPMODE({mode})             !DISPMODE(0)                  !DISPMODE(1)                  !DISPMODE(2)
+!DISPMODE(3)                  !SAMPLERATE({sample_rate})    !GAIN({gain})                 !SRC?
 2023-12-27 22:17:50 laptop.local __main__[38770] INFO 192.168.1.125:57620 connected.
 2023-12-27 22:17:50 laptop.local __main__[38770] INFO 192.168.1.125:57620 connected.
 2023-12-27 22:17:50 laptop.local __main__[38770] DEBUG Received: !DEVICE?
